@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QR</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- 盤 -->
+  <div id="qr" class="stage"></div>
+  <div id="systems" class="systems">
+    <div id="config" class="config">
+      <select id="mask" name="mask">
+        <option value="011" label="(i+j)%3 == 0"></option>
+      </select>
+      <input type="button" value="出力" onclick="analyzeQR()">
+    </div>
+    <div id="result" class="result">
+      <textarea id="qr-result" name="qr-result" rows="8" cols="80"></textarea>
+    </div>
+  </div>
+  <!-- 各マスを描画するためのテンプレート -->
+  <div id="square-template" class="square">
+    <div class="cell"></div>
+  </div>
+  <script src="main.js"></script>
+</body>
+</html>

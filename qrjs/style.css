@@ -1,0 +1,75 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  background-color: gray;
+}
+
+.stage {
+  display: flex;
+  flex-wrap: wrap;
+  float: left;
+  margin: 60px;
+  width: 1054px;
+  height: 1054px;
+}
+
+.systems {
+  float: left;
+  width: 500px;
+  height: 300px;
+  margin: 60px;
+}
+
+.config select {
+  font-size: 30px;
+}
+
+.config input {
+  font-size: 30px;
+}
+
+.result textarea {
+  font-size: 20px;
+}
+
+.square {
+  position: relative;
+  width: 50px;
+  height: 50px;
+  cursor: pointer;;
+}
+
+.square:nth-child(-n + 21) {
+  height: 54px;
+}
+
+.square:nth-child(21n + 1) {
+  width: 54px;
+}
+
+.square:first-child {
+  width: 54px;
+  height: 54px;
+}
+
+.cell {
+  width: 54px;
+  height: 54px;
+}
+
+.cell[data-state="0"]
+{
+  background-color: white;
+}
+
+.cell[data-state="1"]
+{
+  background-color: black;
+}
+
+#square-template {
+  display: none;
+}
