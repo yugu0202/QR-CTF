@@ -62,12 +62,125 @@ function isTimingPattern(x,y) {
   return setBlack;
 }
 
+
+function xorBit(bitdata,maskdata) {
+	let code = ("0000" + (parseInt(bitdata.slice(0,4),2) ^ parseInt(maskdata.slice(0,4),2)).toString(2)).slice(-4);
+	bitdata = bitdata.slice(4);
+	maskdata = maskdata.slice(4);
+	let str_num = (parseInt(bitdata.slice(0,8),2) ^ parseInt(maskdata.slice(0,8),2)).toString();
+	bitdata = bitdata.slice(8);
+	maskdata = maskdata.slice(8);
+
+	for (let i = 0;i<=bitdata.length/8;i++)
+	{
+		let str = String.fromCharCode((parseInt(bitdata.slice(0,8),2) ^ parseInt(maskdata.slice(0,8),2)));
+		bitdata = bitdata.slice(8);
+		maskdata = maskdata.slice(8);
+		console.log(str);
+	}
+
+	console.log(code);
+	console.log(str_num);
+}
+
+
 function analyzeQR() {
   let textarea = document.getElementById("qr-result");
   let select = document.getElementById("mask");
   let num = select.selectedIndex;
-  textarea.value = select.options[num].value;
+
+	let x = 20;
+	let y = 20;
+	let count = 1;
+	let bitdata = "";
+	let maskdata = "";
+	let skipFlag = false;
+
+	while (count <= 11)
+	{
+		if (x == 6)
+		{
+			x -= 1;
+			count ++;
+			continue;
+		}
+
+		while (y <= 20 && y >= 0)
+		{
+			if (y == 6)
+			{
+				console.log("skip! y==6");
+				y += (-1) ** count;
+				continue;
+			}
+
+			if (x >= 0 && x <= 8)
+			{
+				if (y >= 0 && y <= 8)
+				{
+					console.log("skip! left top box");
+					skipFlag = true;
+				}
+				else if (y >= 12 && y <= 20)
+				{
+					console.log("skip! left buttom box");
+					skipFlag = true;
+				}
+			}
+
+			if (x >= 12 && x <= 20 && y >= 0 && y <= 8)
+			{
+				console.log("skip! right top box");
+				skipFlag = true;
+			}
+
+			if (!skipFlag)
+			{
+				bitdata += cellStateList[x][y].toString();
+				bitdata += cellStateList[x-1][y].toString();
+
+				if ((x+y)%3 == 0)
+				{
+					maskdata += "1";
+				}
+				else
+				{
+					maskdata += "0";
+				}
+
+				if ((x-1+y)%3 == 0)
+				{
+					maskdata += "1";
+				}
+				else
+				{
+					maskdata += "0";
+				}
+			}
+
+			skipFlag = false;
+
+			if (y == 0 && count%2 == 1 || y == 20 && count%2 == 0)
+			{
+				break;
+			}
+
+			y += (-1) ** count;
+		}
+
+		x -= 2;
+		count++;
+	}
+
+	console.log(bitdata.length);
+
+	//select.options[num].value
+
+	xorBit(bitdata,maskdata);
+
+  textarea.value = bitdata;
 }
+
 
 window.onload = function(){
   qrResult.readOnly = true;
