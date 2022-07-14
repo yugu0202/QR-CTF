@@ -5,7 +5,6 @@ const qrResult = document.getElementById("qr-result");
 const cellStateList = [];
 
 function onClickSquare(x,y) {
-  console.log(x,y)
   changeColor = (cellStateList[x][y]+1)%2;
   cellStateList[x][y] = changeColor;
   document
@@ -64,6 +63,7 @@ function isTimingPattern(x,y) {
 
 
 function xorBit(bitdata,maskdata) {
+  let return_str = "";
 	let code = ("0000" + (parseInt(bitdata.slice(0,4),2) ^ parseInt(maskdata.slice(0,4),2)).toString(2)).slice(-4);
 	bitdata = bitdata.slice(4);
 	maskdata = maskdata.slice(4);
@@ -71,16 +71,17 @@ function xorBit(bitdata,maskdata) {
 	bitdata = bitdata.slice(8);
 	maskdata = maskdata.slice(8);
 
-	for (let i = 0;i<=bitdata.length/8;i++)
+	for (let i = 0;i<parseInt(str_num);i++)
 	{
-		let str = String.fromCharCode((parseInt(bitdata.slice(0,8),2) ^ parseInt(maskdata.slice(0,8),2)));
+		return_str += String.fromCharCode((parseInt(bitdata.slice(0,8),2) ^ parseInt(maskdata.slice(0,8),2)));
 		bitdata = bitdata.slice(8);
 		maskdata = maskdata.slice(8);
-		console.log(str);
 	}
 
-	console.log(code);
-	console.log(str_num);
+  return_str = "文字数:" + str_num + "\n" + return_str;
+  return_str = "code:" + code + "\n" + return_str;
+
+  return return_str;
 }
 
 
@@ -109,7 +110,6 @@ function analyzeQR() {
 		{
 			if (y == 6)
 			{
-				console.log("skip! y==6");
 				y += (-1) ** count;
 				continue;
 			}
@@ -118,19 +118,16 @@ function analyzeQR() {
 			{
 				if (y >= 0 && y <= 8)
 				{
-					console.log("skip! left top box");
 					skipFlag = true;
 				}
 				else if (y >= 12 && y <= 20)
 				{
-					console.log("skip! left buttom box");
 					skipFlag = true;
 				}
 			}
 
-			if (x >= 12 && x <= 20 && y >= 0 && y <= 8)
+			if (x > 12 && x <= 20 && y >= 0 && y <= 8)
 			{
-				console.log("skip! right top box");
 				skipFlag = true;
 			}
 
@@ -172,13 +169,9 @@ function analyzeQR() {
 		count++;
 	}
 
-	console.log(bitdata.length);
-
 	//select.options[num].value
 
-	xorBit(bitdata,maskdata);
-
-  textarea.value = bitdata;
+  textarea.value = xorBit(bitdata,maskdata);
 }
 
 
