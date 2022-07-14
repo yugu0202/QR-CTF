@@ -42,19 +42,6 @@ html, body {
   cursor: pointer;;
 }
 
-.square:nth-child(-n + 21) {
-  height: 54px;
-}
-
-.square:nth-child(21n + 1) {
-  width: 54px;
-}
-
-.square:first-child {
-  width: 54px;
-  height: 54px;
-}
-
 .cell {
   width: 54px;
   height: 54px;
