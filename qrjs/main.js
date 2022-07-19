@@ -4,6 +4,7 @@ const qrResult = document.getElementById("qr-result");
 
 let cellStateList = [];
 let size = 21;
+let mask = "011";
 
 function onClickSquare(x,y) {
   changeColor = (cellStateList[x][y]+1)%2;
@@ -14,7 +15,6 @@ function onClickSquare(x,y) {
 }
 
 function selectSize(event) {
-	console.log(event.currentTarget.value);
 	size = parseInt(event.currentTarget.value);
 	let width = `width:${size*30}px`
 	let height = `height:${size*30}px`
@@ -22,6 +22,10 @@ function selectSize(event) {
 	qr.setAttribute("height",height);
 	resetBase();
 	createBase();
+}
+
+function selectMask(event) {
+  mask = event.currentTarget.value;
 }
 
 function setPosPattern(x,y) {
@@ -124,32 +128,32 @@ function xorBit(bitdata,maskdata) {
 
 
 function skipPosPattern(x,y) {
-	let skipFlag = false;
 	if (x >= 0 && x <= 8)
 	{
 		if (y >= 0 && y <= 8)
 		{
-			skipFlag = true;
+  		return true;
 		}
-		else if (y >= size-9 && y <= size-1)
+		else if (y >= size-7 && y <= size-1)
 		{
-			skipFlag = true;
+  		return true;
 		}
 	}
 
-	if (x > size-9 && x <= size-1 && y >= 0 && y <= 8)
+	if (x >= size-8 && x <= size-1 && y >= 0 && y <= 8)
 	{
-		skipFlag = true;
+		return true;
 	}
 
-	return skipFlag;
+	return false;
 }
 
 function skipAlignmentPattern(x,y) {
 	let skipFlag = false;
 
-	if (x >=size-11 && x <= size-6) {
-		if (y >=size-11 && y <= size-6) {
+
+	if (x >=size-9 && x <= size-5) {
+		if (y >=size-9 && y <= size-5) {
 			skipFlag = true;
 		}
 	}
@@ -157,6 +161,31 @@ function skipAlignmentPattern(x,y) {
 	return skipFlag;
 }
 
+function getMaskData(x,y) {
+  let maskdata = "";
+  if (mask == "011") {
+		if ((x+y)%3 == 0)
+		{
+			maskdata = "1";
+		}
+		else
+		{
+			maskdata = "0";
+		}
+  }
+  else if (mask == "001") {
+		if (y%2 == 0)
+		{
+			maskdata = "1";
+		}
+		else
+		{
+			maskdata = "0";
+		}
+  }
+
+  return maskdata;
+}
 
 function analyzeQR() {
   let textarea = document.getElementById("qr-result");
@@ -168,7 +197,8 @@ function analyzeQR() {
 	let count = 1;
 	let bitdata = "";
 	let maskdata = "";
-	let skipFlag = false;
+	let skipFlagR = false;
+	let skipFlagL = false;
 
 	while (count <= (size+1)/2)
 	{
@@ -187,37 +217,33 @@ function analyzeQR() {
 				continue;
 			}
 
-			skipFlag = skipPosPattern(x,y);
+			skipFlagR = skipPosPattern(x,y);
+			skipFlagL = skipPosPattern(x-1,y);
 
-			if (size >= 25) {
-				skipFlag = skipAlignmentPattern(x,y);
+			if (size >= 25 && !skipFlagR) {
+				skipFlagR = skipAlignmentPattern(x,y);
+			}
+			if (size >= 25 && !skipFlagL) {
+				skipFlagL = skipAlignmentPattern(x-1,y);
 			}
 
-			if (!skipFlag)
+
+			if (!skipFlagR)
 			{
+        if (cellStateList[x][y] == "1") console.log(x,y);
 				bitdata += cellStateList[x][y].toString();
-				bitdata += cellStateList[x-1][y].toString();
 
-				if ((x+y)%3 == 0)
-				{
-					maskdata += "1";
-				}
-				else
-				{
-					maskdata += "0";
-				}
-
-				if ((x-1+y)%3 == 0)
-				{
-					maskdata += "1";
-				}
-				else
-				{
-					maskdata += "0";
-				}
+        maskdata += getMaskData(x,y);
 			}
+      if (!skipFlagL)
+      {
+        if (cellStateList[x-1][y] == "1") console.log(x,y);
+				bitdata += cellStateList[x-1][y].toString();
+        maskdata += getMaskData(x-1,y);
+      }
 
-			skipFlag = false;
+			skipFlagR = false;
+			skipFlagL = false;
 
 			if (y == 0 && count%2 == 1 || y == size-1 && count%2 == 0)
 			{
@@ -230,6 +256,8 @@ function analyzeQR() {
 		x -= 2;
 		count++;
 	}
+
+  console.log(bitdata);
 
   textarea.value = xorBit(bitdata,maskdata);
 }
@@ -297,6 +325,8 @@ window.onload = function(){
 
 	createBase();
 
-	let select = document.getElementById("size");
-	select.addEventListener('change',selectSize);
+	let size = document.getElementById("size");
+	size.addEventListener('change',selectSize);
+	let mask = document.getElementById("mask");
+	mask.addEventListener('change',selectMask);
 }
