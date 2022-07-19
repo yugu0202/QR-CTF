@@ -12,6 +12,10 @@ function onClickSquare(x,y) {
     .setAttribute("data-state",changeColor);
 }
 
+function selectSize(event) {
+	console.log(event.currentTarget.value);
+}
+
 function setPosPattern(x,y) {
   let setBlack = false;
   for (let a=x;a<x+7;a++)
@@ -220,4 +224,7 @@ window.onload = function(){
   setPosPattern(0,0);
   setPosPattern(0,14);
   setPosPattern(14,0);
+
+	let select = document.getElementById("size");
+	select.addEventListener('change',selectSize);
 }

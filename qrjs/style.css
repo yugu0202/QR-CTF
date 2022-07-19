@@ -12,8 +12,8 @@ html, body {
   flex-wrap: wrap;
   float: left;
   margin: 60px;
-  width: 1054px;
-  height: 1054px;
+  width: 1050px;
+  height: 1050px;
 }
 
 .systems {
@@ -43,8 +43,8 @@ html, body {
 }
 
 .cell {
-  width: 54px;
-  height: 54px;
+  width: 50px;
+  height: 50px;
 }
 
 .cell[data-state="0"]
