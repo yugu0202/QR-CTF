@@ -17,8 +17,14 @@
         <option value="25" label="25x25"></option>
       </select>
       <select id="mask" name="mask">
-        <option value="011" label="(i+j)%3 == 0"></option>
-        <option value="001" label="i%2 == 0"></option>
+        <option value="000" label="(i+j) mod 2 = 0"></option>
+        <option value="001" label="i mod 2 = 0"></option>
+        <option value="010" label="j mod 3 = 0"></option>
+        <option value="011" label="(i+j) mod 3 = 0"></option>
+        <option value="100" label="((i div 2)+(j div 3)) mod 2 = 0"></option>
+        <option value="101" label="(i*j) mod 2 + (i*j) mod 3 = 0"></option>
+        <option value="110" label="((i*j) mod 2 + (i*j) mod 3) mod 2 = 0"></option>
+        <option value="111" label="((i*j) mod 3 + (i+j) mod 2) mod 2 = 0"></option>
       </select>
       <input type="button" value="出力" onclick="analyzeQR()">
     </div>

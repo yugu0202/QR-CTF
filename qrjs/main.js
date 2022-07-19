@@ -5,6 +5,48 @@ const qrResult = document.getElementById("qr-result");
 let cellStateList = [];
 let size = 21;
 let mask = "011";
+let maskSelect = document.getElementById("mask");
+
+function checkMask() {
+  let maskdata = "";
+
+  for (let i=2;i<5;i++) {
+    maskdata += cellStateList[i][8].toString();
+  }
+
+  switch (maskdata) {
+    case "101":
+      mask = "000";
+      break;
+    case "100":
+      mask = "001";
+      break;
+    case "111":
+      mask = "010";
+      break;
+    case "110":
+      mask = "011";
+      break;
+    case "001":
+      mask = "100";
+      break;
+    case "000":
+      mask = "101";
+      break;
+    case "011":
+      mask = "110";
+      break;
+    case "010":
+      mask = "111";
+      break;
+  }
+
+  for (opt of maskSelect.options) {
+    if (opt.value == mask) {
+      opt.selected = true;
+    }
+  }
+}
 
 function onClickSquare(x,y) {
   changeColor = (cellStateList[x][y]+1)%2;
@@ -12,12 +54,16 @@ function onClickSquare(x,y) {
   document
     .querySelector(`[data-x='${x}'][data-y='${y}']`)
     .setAttribute("data-state",changeColor);
+
+  if (x >= 2 && x <= 4 && y == 8) {
+    checkMask();
+  }
 }
 
 function selectSize(event) {
 	size = parseInt(event.currentTarget.value);
-	let width = `width:${size*30}px`
-	let height = `height:${size*30}px`
+	let width = `width:${size*30}px`;
+	let height = `height:${size*30}px`;
 	qr.setAttribute("style",width);
 	qr.setAttribute("height",height);
 	resetBase();
@@ -161,27 +207,33 @@ function skipAlignmentPattern(x,y) {
 	return skipFlag;
 }
 
-function getMaskData(x,y) {
+function getMaskData(j,i) {
   let maskdata = "";
-  if (mask == "011") {
-		if ((x+y)%3 == 0)
-		{
-			maskdata = "1";
-		}
-		else
-		{
-			maskdata = "0";
-		}
-  }
-  else if (mask == "001") {
-		if (y%2 == 0)
-		{
-			maskdata = "1";
-		}
-		else
-		{
-			maskdata = "0";
-		}
+  switch (mask) {
+    case "000":
+      maskdata = ((i+j)%2 == 0) ? "1" : "0";
+      break;
+    case "001":
+      maskdata = (i%2 == 0) ? "1" : "0";
+      break;
+    case "010":
+      maskdata = (j%3 == 0) ? "1" : "0";
+      break;
+    case "011":
+      maskdata = ((i+j)%3 == 0) ? "1" : "0";
+      break;
+    case "100":
+      maskdata = (((i/2)+(j/3))%2 == 0) ? "1" : "0";
+      break;
+    case "101":
+      maskdata = ((i*j)%2+(i*j)%3 == 0) ? "1" : "0";
+      break;
+    case "110":
+      maskdata = (((i*j)%2+(i*j)%3)%2 == 0) ? "1" : "0";
+      break;
+    case "111":
+      maskdata = (((i*j)%3+(i+j)%2)%2 == 0) ? "1" : "0";
+      break;
   }
 
   return maskdata;
@@ -230,14 +282,12 @@ function analyzeQR() {
 
 			if (!skipFlagR)
 			{
-        if (cellStateList[x][y] == "1") console.log(x,y);
 				bitdata += cellStateList[x][y].toString();
 
         maskdata += getMaskData(x,y);
 			}
       if (!skipFlagL)
       {
-        if (cellStateList[x-1][y] == "1") console.log(x,y);
 				bitdata += cellStateList[x-1][y].toString();
         maskdata += getMaskData(x-1,y);
       }
@@ -256,8 +306,6 @@ function analyzeQR() {
 		x -= 2;
 		count++;
 	}
-
-  console.log(bitdata);
 
   textarea.value = xorBit(bitdata,maskdata);
 }
@@ -327,6 +375,5 @@ window.onload = function(){
 
 	let size = document.getElementById("size");
 	size.addEventListener('change',selectSize);
-	let mask = document.getElementById("mask");
-	mask.addEventListener('change',selectMask);
+	maskSelect.addEventListener('change',selectMask);
 }
