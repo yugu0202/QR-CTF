@@ -12,8 +12,8 @@ html, body {
   flex-wrap: wrap;
   float: left;
   margin: 60px;
-  width: 1050px;
-  height: 1050px;
+  width: 630px;
+  height: 630px;
 }
 
 .systems {
@@ -37,14 +37,14 @@ html, body {
 
 .square {
   position: relative;
-  width: 50px;
-  height: 50px;
+  width: 30px;
+  height: 30px;
   cursor: pointer;;
 }
 
 .cell {
-  width: 50px;
-  height: 50px;
+  width: 30px;
+  height: 30px;
 }
 
 .cell[data-state="0"]
