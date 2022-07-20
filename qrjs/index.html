@@ -15,6 +15,10 @@
       <select id="size" name="size">
         <option value="21" label="21x21"></option>
         <option value="25" label="25x25"></option>
+        <option value="29" label="29x29"></option>
+        <option value="33" label="33x33"></option>
+        <option value="37" label="37x37"></option>
+        <option value="41" label="41x41"></option>
       </select>
       <select id="mask" name="mask">
         <option value="000" label="(i+j) mod 2 = 0"></option>
@@ -35,6 +39,9 @@
   <!-- 各マスを描画するためのテンプレート -->
   <div id="square-template" class="square">
     <div class="cell"></div>
+  </div>
+  <div id="remove-template" class="remove">
+    <div class="rb"></div>
   </div>
   <script src="main.js"></script>
 </body>

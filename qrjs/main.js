@@ -1,5 +1,6 @@
 const qr = document.getElementById("qr");
 const squareTemplate = document.getElementById("square-template");
+const removeTemplate = document.getElementById("remove-template");
 const qrResult = document.getElementById("qr-result");
 
 let cellStateList = [];
@@ -14,32 +15,7 @@ function checkMask() {
     maskdata += cellStateList[i][8].toString();
   }
 
-  switch (maskdata) {
-    case "101":
-      mask = "000";
-      break;
-    case "100":
-      mask = "001";
-      break;
-    case "111":
-      mask = "010";
-      break;
-    case "110":
-      mask = "011";
-      break;
-    case "001":
-      mask = "100";
-      break;
-    case "000":
-      mask = "101";
-      break;
-    case "011":
-      mask = "110";
-      break;
-    case "010":
-      mask = "111";
-      break;
-  }
+  mask = ("000" + (parseInt(maskdata,2) ^ parseInt("101",2)).toString(2)).slice(-3);
 
   for (opt of maskSelect.options) {
     if (opt.value == mask) {
@@ -56,6 +32,36 @@ function onClickSquare(x,y) {
     .setAttribute("data-state",changeColor);
 
   if (x >= 2 && x <= 4 && y == 8) {
+    checkMask();
+  }
+}
+
+function onClickRemove(x) {
+	for (let y=0;y<size;y++) {
+		if (isTimingPattern(x,y) || x == 8 && y == size-8) {
+			cellStateList[x][y] = 1;
+			document
+				.querySelector(`[data-x='${x}'][data-y='${y}']`)
+				.setAttribute("data-state",1);
+		}
+		else {
+			cellStateList[x][y] = 0;
+			document
+				.querySelector(`[data-x='${x}'][data-y='${y}']`)
+				.setAttribute("data-state",0);
+		}
+	}
+
+  setPosPattern(0,0);
+  setPosPattern(0,size-7);
+  setPosPattern(size-7,0);
+
+	if (size >= 25)
+	{
+		setAlignmentPattern(size-9,size-9);
+	}
+
+  if (x >= 2 && x <= 4) {
     checkMask();
   }
 }
@@ -312,6 +318,17 @@ function analyzeQR() {
 
 function createBase() {
   let setBlack = false;
+
+	for (let x=0;x<size;x++) {
+		const remove = removeTemplate.cloneNode(true);
+		remove.removeAttribute("id");
+		qr.appendChild(remove);
+
+		remove.addEventListener('click', () => {
+			onClickRemove(x);
+		})
+	}
+
   for (let y=0;y<size;y++)
   {
     let cellState = []

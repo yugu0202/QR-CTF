@@ -1,6 +1,5 @@
 import sys
 import os
-import random
 from PIL import Image
 
 def Main():
@@ -15,7 +14,7 @@ def Main():
     os.makedirs(out_path,exist_ok=True)
 
     for num,slice_img in enumerate(SplitImage(img,dn),1):
-        slice_img.save(out_path + "/" + str(random.randint(1,100)) +".png","PNG")
+        slice_img.save(out_path + "/" + str(num) +".png","PNG")
 
     print("finish")
 
