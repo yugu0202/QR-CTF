@@ -71,10 +71,36 @@ html, body {
   border-left: 15px solid transparent;
 }
 
+.palette {
+	margin: 30px;
+  position: relative;
+  width: 840px;
+  height: 630px;
+  cursor: pointer;;
+}
+
+.qrpalette {
+  position: relative;
+  width: 30px;
+  height: 630px;
+  cursor: pointer;;
+	margin: 0px 5px;
+	float: left;
+}
+
+.qrp {
+  display: flex;
+  flex-wrap: wrap;
+	width 30px;
+}
+
 #square-template {
   display: none;
 }
 
 #remove-template {
+  display: none;
+
+#qrpalette-template {
   display: none;
 }

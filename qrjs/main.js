@@ -1,9 +1,12 @@
 const qr = document.getElementById("qr");
+const palette = document.getElementById("palette");
 const squareTemplate = document.getElementById("square-template");
 const removeTemplate = document.getElementById("remove-template");
+const qrpaletteTemplate = document.getElementById("qrpalette-template");
 const qrResult = document.getElementById("qr-result");
 
 let cellStateList = [];
+let paletteStateList = [];
 let size = 21;
 let mask = "011";
 let maskSelect = document.getElementById("mask");
@@ -25,7 +28,7 @@ function checkMask() {
 }
 
 function onClickSquare(x,y) {
-  changeColor = (cellStateList[x][y]+1)%2;
+  let changeColor = (cellStateList[x][y]+1)%2;
   cellStateList[x][y] = changeColor;
   document
     .querySelector(`[data-x='${x}'][data-y='${y}']`)
@@ -34,6 +37,14 @@ function onClickSquare(x,y) {
   if (x >= 2 && x <= 4 && y == 8) {
     checkMask();
   }
+}
+
+function onClickPalette(x,y) {
+  let changeColor = (paletteStateList[x][y]+1)%2;
+  paletteStateList[x][y] = changeColor;
+  document
+    .querySelector(`[pdata-x='${x}'][pdata-y='${y}']`)
+    .setAttribute("data-state",changeColor);
 }
 
 function onClickRemove(x) {
@@ -80,27 +91,44 @@ function selectMask(event) {
   mask = event.currentTarget.value;
 }
 
+function onDragPalette(event) {
+	let dataTransfer = event.dataTransfer;
+
+	dataTransfer.setData("text/plain",event.target.getAttribute("data"));
+}
+
+function onDropQR(event) {
+	event.preventDefault();
+	let px = parseInt(event.dataTransfer.getData("text"));
+	let x = parseInt(event.target.getAttribute("data-x"));
+	
+	for (let y=0;y<size;y++) {
+		let paletteColor = paletteStateList[px][y];
+		document
+			.querySelector(`[data-x='${x}'][data-y='${y}']`)
+			.setAttribute("data-state",paletteColor);
+		cellStateList[x][y] = paletteColor;
+	}
+	return false;
+}
+
 function setPosPattern(x,y) {
   let setBlack = false;
-  for (let a=x;a<x+7;a++)
-  {
-    for (let b=y;b<y+7;b++)
-    {
-      if (a == x || a == x+6)
-      {
+  for (let a=x;a<x+7;a++) {
+
+    for (let b=y;b<y+7;b++) {
+
+      if (a == x || a == x+6) {
         setBlack = true;
       }
-      else if (b == y || b == y+6)
-      {
+      else if (b == y || b == y+6) {
         setBlack = true;
       }
-      else if (a >= x+2 && a <= x+4 && b >= y+2 && b<= y+4)
-      {
+      else if (a >= x+2 && a <= x+4 && b >= y+2 && b<= y+4) {
         setBlack = true;
       }
 
-      if (setBlack)
-      {
+      if (setBlack) {
         setBlack = false;
         cellStateList[a][b] = 1;
         document
@@ -113,8 +141,11 @@ function setPosPattern(x,y) {
 
 function setAlignmentPattern(x,y) {
 	let setBlack = false;
+
 	for (let a=x;a<x+5;a++) {
+
 		for (let b=y;b<y+5;b++) {
+
 			if (a== x || a == x+4) {
 				setBlack = true;
 			}
@@ -125,8 +156,7 @@ function setAlignmentPattern(x,y) {
 				setBlack = true;
 			}
 
-      if (setBlack)
-      {
+      if (setBlack) {
         setBlack = false;
         cellStateList[a][b] = 1;
         document
@@ -140,14 +170,12 @@ function setAlignmentPattern(x,y) {
 function isTimingPattern(x,y) {
   let setBlack = false;
 
-  for (let i=8;i<=size;i+=2)
-  {
-    if (x == i && y == 6)
-    {
+  for (let i=8;i<=size;i+=2) {
+
+    if (x == i && y == 6) {
       setBlack = true;
     }
-    else if (y == i && x == 6)
-    {
+    else if (y == i && x == 6) {
       setBlack = true;
     }
   }
@@ -165,8 +193,7 @@ function xorBit(bitdata,maskdata) {
 	bitdata = bitdata.slice(8);
 	maskdata = maskdata.slice(8);
 
-	for (let i = 0;i<parseInt(str_num);i++)
-	{
+	for (let i = 0;i<parseInt(str_num);i++) {
 		return_str += String.fromCharCode((parseInt(bitdata.slice(0,8),2) ^ parseInt(maskdata.slice(0,8),2)));
 		bitdata = bitdata.slice(8);
 		maskdata = maskdata.slice(8);
@@ -180,20 +207,17 @@ function xorBit(bitdata,maskdata) {
 
 
 function skipPosPattern(x,y) {
-	if (x >= 0 && x <= 8)
-	{
-		if (y >= 0 && y <= 8)
-		{
+	if (x >= 0 && x <= 8) {
+
+		if (y >= 0 && y <= 8) {
   		return true;
 		}
-		else if (y >= size-7 && y <= size-1)
-		{
+		else if (y >= size-7 && y <= size-1) {
   		return true;
 		}
 	}
 
-	if (x >= size-8 && x <= size-1 && y >= 0 && y <= 8)
-	{
+	if (x >= size-8 && x <= size-1 && y >= 0 && y <= 8) {
 		return true;
 	}
 
@@ -258,19 +282,15 @@ function analyzeQR() {
 	let skipFlagR = false;
 	let skipFlagL = false;
 
-	while (count <= (size+1)/2)
-	{
-		if (x == 6)
-		{
+	while (count <= (size+1)/2) {
+		if (x == 6) {
 			x -= 1;
 			count ++;
 			continue;
 		}
 
-		while (y <= size-1 && y >= 0)
-		{
-			if (y == 6)
-			{
+		while (y <= size-1 && y >= 0) {
+			if (y == 6) {
 				y += (-1) ** count;
 				continue;
 			}
@@ -286,23 +306,21 @@ function analyzeQR() {
 			}
 
 
-			if (!skipFlagR)
-			{
+			if (!skipFlagR) {
 				bitdata += cellStateList[x][y].toString();
 
         maskdata += getMaskData(x,y);
 			}
-      if (!skipFlagL)
-      {
+
+      if (!skipFlagL) {
 				bitdata += cellStateList[x-1][y].toString();
         maskdata += getMaskData(x-1,y);
-      }
+			}
 
 			skipFlagR = false;
 			skipFlagL = false;
 
-			if (y == 0 && count%2 == 1 || y == size-1 && count%2 == 0)
-			{
+			if (y == 0 && count%2 == 1 || y == size-1 && count%2 == 0) {
 				break;
 			}
 
@@ -314,6 +332,35 @@ function analyzeQR() {
 	}
 
   textarea.value = xorBit(bitdata,maskdata);
+}
+
+function createPalette() {
+	for (let x=0;x<size;x++) {
+		const qrpalette = qrpaletteTemplate.cloneNode(true);
+		qrpalette.removeAttribute("id");
+		palette.appendChild(qrpalette);
+		qrpalette.setAttribute("data",x);
+		const qrp = qrpalette.querySelector(".qrp");
+
+		let cellState = []
+
+		for (let y=0;y<size;y++) {
+			const square = squareTemplate.cloneNode(true);
+			square.removeAttribute("id");
+			qrp.appendChild(square);
+
+			const cell = square.querySelector(".cell");
+			cell.setAttribute("pdata-x",x);
+			cell.setAttribute("pdata-y",y);
+			cell.setAttribute("data-state",0);
+			cellState.push(0);
+
+      square.addEventListener('click', () => {
+        onClickPalette(x,y);
+      })
+		}
+		paletteStateList.push(cellState);
+	}
 }
 
 function createBase() {
@@ -329,11 +376,9 @@ function createBase() {
 		})
 	}
 
-  for (let y=0;y<size;y++)
-  {
+  for (let y=0;y<size;y++) {
     let cellState = []
-    for (let x=0;x<size;x++)
-    {
+    for (let x=0;x<size;x++) {
       const square = squareTemplate.cloneNode(true);
       square.removeAttribute("id");
       qr.appendChild(square);
@@ -344,19 +389,16 @@ function createBase() {
 
       setBlack = isTimingPattern(x,y);
 
-      if (x == 8 && y == size-8)
-      {
+      if (x == 8 && y == size-8) {
         setBlack = true;
       }
 
-      if (setBlack)
-      {
+      if (setBlack) {
         setBlack = false;
         cell.setAttribute("data-state",1);
         cellState.push(1);
       }
-      else
-      {
+      else {
         cell.setAttribute("data-state",0);
         cellState.push(0);
       }
@@ -372,8 +414,7 @@ function createBase() {
   setPosPattern(0,size-7);
   setPosPattern(size-7,0);
 
-	if (size >= 25)
-	{
+	if (size >= 25) {
 		setAlignmentPattern(size-9,size-9);
 	}
 }
@@ -389,6 +430,7 @@ window.onload = function(){
   qrResult.readOnly = true;
 
 	createBase();
+	createPalette();
 
 	let size = document.getElementById("size");
 	size.addEventListener('change',selectSize);

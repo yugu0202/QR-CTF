@@ -9,7 +9,7 @@
 </head>
 <body>
   <!-- 盤 -->
-  <div id="qr" class="stage"></div>
+  <div id="qr" class="stage" ondrop="onDropQR(event)" ondragover="event.preventDefault()"></div>
   <div id="systems" class="systems">
     <div id="config" class="config">
       <select id="size" name="size">
@@ -35,6 +35,7 @@
     <div id="result" class="result">
       <textarea id="qr-result" name="qr-result" rows="8" cols="80"></textarea>
     </div>
+		<div id="palette" class="palette"></div>
   </div>
   <!-- 各マスを描画するためのテンプレート -->
   <div id="square-template" class="square">
@@ -42,6 +43,9 @@
   </div>
   <div id="remove-template" class="remove">
     <div class="rb"></div>
+  </div>
+  <div id="qrpalette-template" class="qrpalette" draggable="true" ondragstart="onDragPalette(event)">
+    <div class="qrp"></div>
   </div>
   <script src="main.js"></script>
 </body>
