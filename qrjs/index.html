@@ -44,8 +44,7 @@
   <div id="remove-template" class="remove">
     <div class="rb"></div>
   </div>
-  <div id="qrpalette-template" class="qrpalette" draggable="true" ondragstart="onDragPalette(event)">
-    <div class="qrp"></div>
+  <div id="qrpalette-template" class="qrpalette" draggable="true" ondragstart="onDragPalette(event)" ondrop="onDropPalette(event)" ondragover="event.preventDefault()">
   </div>
   <script src="main.js"></script>
 </body>
