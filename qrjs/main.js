@@ -79,12 +79,14 @@ function onClickRemove(x) {
 
 function selectSize(event) {
 	size = parseInt(event.currentTarget.value);
-	let width = `width:${size*30}px`;
-	let height = `height:${size*30}px`;
-	qr.setAttribute("style",width);
-	qr.setAttribute("height",height);
+	let style = `width:${size*30}px;height:${size*30}px`;
+	qr.setAttribute("style",style);
+	style = `width:${size*40}px;height:${size*20}px`;
+	palette.setAttribute("style",style);
 	resetBase();
 	createBase();
+	resetPalette();
+	createPalette();
 }
 
 function selectMask(event) {
@@ -97,11 +99,34 @@ function onDragPalette(event) {
 	dataTransfer.setData("text/plain",event.target.getAttribute("data"));
 }
 
+function onDropPalette(event) {
+  event.preventDefault();
+
+	let fromx = parseInt(event.dataTransfer.getData("text"));
+	let tox = parseInt(event.target.getAttribute("pdata-x"));
+
+  console.log(fromx,tox);
+
+  for (let y=0;y<size;y++) {
+    let fromColor = paletteStateList[fromx][y];
+    let toColor = paletteStateList[tox][y];
+		document
+			.querySelector(`[pdata-x='${tox}'][pdata-y='${y}']`)
+			.setAttribute("data-state",fromColor);
+		document
+			.querySelector(`[pdata-x='${fromx}'][pdata-y='${y}']`)
+			.setAttribute("data-state",toColor);
+		paletteStateList[tox][y] = fromColor;
+		paletteStateList[fromx][y] = toColor;
+  }
+
+}
+
 function onDropQR(event) {
 	event.preventDefault();
 	let px = parseInt(event.dataTransfer.getData("text"));
 	let x = parseInt(event.target.getAttribute("data-x"));
-	
+
 	for (let y=0;y<size;y++) {
 		let paletteColor = paletteStateList[px][y];
 		document
@@ -109,7 +134,6 @@ function onDropQR(event) {
 			.setAttribute("data-state",paletteColor);
 		cellStateList[x][y] = paletteColor;
 	}
-	return false;
 }
 
 function setPosPattern(x,y) {
@@ -340,19 +364,21 @@ function createPalette() {
 		qrpalette.removeAttribute("id");
 		palette.appendChild(qrpalette);
 		qrpalette.setAttribute("data",x);
-		const qrp = qrpalette.querySelector(".qrp");
+		qrpalette.setAttribute("style",`width:20px;height:${size*20}px;`);
 
 		let cellState = []
 
 		for (let y=0;y<size;y++) {
 			const square = squareTemplate.cloneNode(true);
 			square.removeAttribute("id");
-			qrp.appendChild(square);
+			qrpalette.appendChild(square);
+			square.setAttribute("style","width:20px;height:20px;");
 
 			const cell = square.querySelector(".cell");
 			cell.setAttribute("pdata-x",x);
 			cell.setAttribute("pdata-y",y);
 			cell.setAttribute("data-state",0);
+			cell.setAttribute("style","width:20px;height:20px;");
 			cellState.push(0);
 
       square.addEventListener('click', () => {
@@ -424,6 +450,13 @@ function resetBase() {
 		qr.removeChild(qr.lastChild);
 	}
 	cellStateList = [];
+}
+
+function resetPalette() {
+	while (palette.lastChild) {
+		palette.removeChild(palette.lastChild);
+	}
+	paletteStateList = [];
 }
 
 window.onload = function(){
