@@ -1,0 +1,103 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  background-color: gray;
+}
+
+.stage {
+  display: flex;
+  flex-wrap: wrap;
+  float: left;
+  margin: 60px;
+  width: 630px;
+  height: 630px;
+}
+
+.systems {
+  float: left;
+  width: 500px;
+  height: 300px;
+  margin: 60px;
+}
+
+.config select {
+  font-size: 30px;
+}
+
+.config input {
+  font-size: 30px;
+}
+
+.result textarea {
+  font-size: 20px;
+  width: 500px;
+  height: 100px;
+}
+
+.square {
+  position: relative;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;;
+}
+
+.cell {
+  width: 30px;
+  height: 30px;
+}
+
+.cell[data-state="0"]
+{
+  background-color: white;
+}
+
+.cell[data-state="1"]
+{
+  background-color: black;
+}
+
+.remove {
+  position: relative;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;;
+}
+
+.rb {
+	border-top: 15px solid #F0897F;
+  border-right: 15px solid transparent;
+  border-bottom: 15px solid transparent;
+  border-left: 15px solid transparent;
+}
+
+.palette {
+	margin: 30px;
+  position: relative;
+  width: 840px;
+  height: 630px;
+  cursor: pointer;;
+}
+
+.qrpalette {
+  position: relative;
+  width: 30px;
+  height: 630px;
+  cursor: pointer;;
+	margin: 0px 5px;
+	float: left;
+}
+
+#square-template {
+  display: none;
+}
+
+#remove-template {
+  display: none;
+}
+
+#qrpalette-template {
+  display: none;
+}

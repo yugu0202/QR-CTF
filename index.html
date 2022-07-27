@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QR</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- 盤 -->
+  <div id="qr" class="stage" ondrop="onDropQR(event)" ondragover="event.preventDefault()"></div>
+  <div id="systems" class="systems">
+    <div id="config" class="config">
+      <select id="size" name="size">
+        <option value="21" label="21x21"></option>
+        <option value="25" label="25x25"></option>
+        <option value="29" label="29x29"></option>
+        <option value="33" label="33x33"></option>
+        <option value="37" label="37x37"></option>
+        <option value="41" label="41x41"></option>
+      </select>
+      <select id="mask" name="mask">
+        <option value="000" label="(i+j) mod 2 = 0"></option>
+        <option value="001" label="i mod 2 = 0"></option>
+        <option value="010" label="j mod 3 = 0"></option>
+        <option value="011" label="(i+j) mod 3 = 0"></option>
+        <option value="100" label="((i div 2)+(j div 3)) mod 2 = 0"></option>
+        <option value="101" label="(i*j) mod 2 + (i*j) mod 3 = 0"></option>
+        <option value="110" label="((i*j) mod 2 + (i*j) mod 3) mod 2 = 0"></option>
+        <option value="111" label="((i*j) mod 3 + (i+j) mod 2) mod 2 = 0"></option>
+      </select>
+      <input type="button" value="出力" onclick="analyzeQR()">
+    </div>
+    <div id="result" class="result">
+      <textarea id="qr-result" name="qr-result" rows="8" cols="80"></textarea>
+    </div>
+		<div id="palette" class="palette"></div>
+  </div>
+  <!-- 各マスを描画するためのテンプレート -->
+  <div id="square-template" class="square">
+    <div class="cell"></div>
+  </div>
+  <div id="remove-template" class="remove">
+    <div class="rb"></div>
+  </div>
+  <div id="qrpalette-template" class="qrpalette" draggable="true" ondragstart="onDragPalette(event)" ondrop="onDropPalette(event)" ondragover="event.preventDefault()">
+  </div>
+  <script src="main.js"></script>
+</body>
+</html>
